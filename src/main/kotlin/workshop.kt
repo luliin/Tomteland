@@ -16,6 +16,8 @@ fun main() {
 }
 
 private fun runProgram(santaList: List<Santa>) {
+
+//    println(getBosses2(getSanta(getSantaList(), "dammråttan")))
     printWelcomeMessage()
     var isRunning = true
     while (isRunning) {
@@ -41,7 +43,7 @@ private fun subordinatesToBoss(list: List<Santa>, santa: Santa, howManyToAdd: In
 // We find Santa object with a chosen name. If object is null we return a new Santa object
 private fun getSanta(list: List<Santa>, name: String) = list.find {
     it.name.equals(name, true)
-    } ?: Santa("Det finns ingen tomte med det namnet! Försök igen.", 0)
+} ?: Santa("Det finns ingen tomte med det namnet! Försök igen.", 0)
 
 //Recursive function
 private fun getSubordinates(santa: Santa): MutableList<Santa> {
@@ -56,13 +58,28 @@ private fun getSubordinates(santa: Santa): MutableList<Santa> {
 }
 
 // Recursive function
-private fun getBosses(santa: Santa): MutableList<Santa> {
+private fun getBossesFirstTry(santa: Santa): MutableList<Santa> {
     val listToReturn = mutableListOf<Santa>()
     return if (santa.boss == null) listToReturn else {
         listToReturn += santa.boss!!
-        listToReturn += getBosses(santa.boss!!)
+        listToReturn += getBossesFirstTry(santa.boss!!)
         listToReturn
     }
+}
+
+// Recursive function
+private fun getBosses(santa: Santa): MutableList<Santa> {
+    val listToReturn = mutableListOf<Santa>()
+    tailrec fun innerCall(santa: Santa, list: MutableList<Santa>): MutableList<Santa> =
+        if (santa.boss == null) {
+            list += santa
+            list
+        } else {
+            list += santa
+            innerCall(santa.boss!!, list)
+        }
+    return if (santa.boss == null) listToReturn
+    else innerCall(santa.boss!!, listToReturn)
 }
 
 private fun printSubordinates(santa: Santa) = if (santa.id != 0) {
